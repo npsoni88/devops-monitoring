@@ -66,4 +66,38 @@ systemctl enable alertmanager
 
 ```
 useradd --no-create-home --shell /bin/false node_exporter
+cd /tmp
+wget https://github.com/prometheus/node_exporter/releases/download/v1.0.0/node_exporter-1.0.0.linux-amd64.tar.gz
+tar -xzf node_exporter-1.0.0.linux-amd64.tar.gz
+cd cd node_exporter-1.0.0.linux-amd64/
+mv node_exporter /usr/local/bin/
+chown node_exporter:node_exporter /usr/local/bin/node_exporter
+
+vim /etc/systemd/system/node_exporter.service
+find the file in the same repository and copy paste the content
+systemctl start node_exporter
+systemctl status node_exporter
+systemctl enable node_exporter
+
+vim /etc/prometheus/prometheus.yaml and add the node_exporter target. Your yml file should look like this.
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+    - targets: ['localhost:9090']
+  - job_name: 'node_exporter'
+    static_configs:
+    - targets: ['localhost:9100']
+
+systemctl restart prometheus
+
+Now you can view the data exported by node_exporter in prometheus.
 ```
+
+
+
+
+
+
+
+
